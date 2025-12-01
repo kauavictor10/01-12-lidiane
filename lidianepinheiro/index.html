@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>E-book – Lidiane Pinheiro</title>
+
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+        overflow-x: hidden;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background: #ffffff;
+        color: #1a1a1a;
+        overflow-x: hidden;
+        line-height: 1.6;
+      }
+
+      /* Container padrão */
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 30px;
+      }
+
+      /* Hero Section */
+      .hero {
+        position: relative;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        background: #1a1a1a;
+        overflow: hidden;
+        padding: 80px 0;
+      }
+
+      .hero-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        overflow: hidden;
+      }
+
+      .hero-bg img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center 20%;
+        display: block;
+      }
+
+      /* Fallback caso não tenha imagem */
+      .hero-bg:empty {
+        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+      }
+
+      .hero-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          to bottom,
+          rgba(0, 0, 0, 0.45),
+          rgba(0, 0, 0, 0.7)
+        );
+        z-index: 2;
+      }
+
+      .hero-content {
+        position: relative;
+        z-index: 10;
+        max-width: 800px;
+        margin: 0 auto;
+        text-align: center;
+        padding: 0 30px;
+      }
+
+      .hero-badge {
+        display: inline-block;
+        background: rgba(255, 42, 42, 0.15);
+        backdrop-filter: blur(10px);
+        color: #ff2a2a;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        padding: 12px 30px;
+        border-radius: 50px;
+        border: 2px solid rgba(255, 42, 42, 0.4);
+        margin-bottom: 30px;
+        animation: fadeIn 0.6s ease-out;
+      }
+
+      .hero h1 {
+        font-family: "Poppins", sans-serif;
+        font-size: 56px;
+        font-weight: 800;
+        color: #ffffff;
+        line-height: 1.2;
+        margin-bottom: 25px;
+        animation: fadeInUp 0.8s ease-out 0.2s backwards;
+      }
+
+      .hero h1 .highlight {
+        color: #ff2a2a;
+        position: relative;
+        display: inline-block;
+      }
+
+      .hero p {
+        font-size: 20px;
+        color: rgba(255, 255, 255, 0.9);
+        line-height: 1.7;
+        margin-bottom: 40px;
+        animation: fadeInUp 0.8s ease-out 0.4s backwards;
+      }
+
+      .btn-primary {
+        display: inline-block;
+        background: #ff2a2a;
+        color: white;
+        font-size: 16px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        padding: 18px 45px;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 10px 30px rgba(255, 42, 42, 0.3);
+        animation: fadeInUp 0.8s ease-out 0.6s backwards;
+      }
+
+      .btn-primary:hover {
+        background: #e61e1e;
+        transform: translateY(-3px);
+        box-shadow: 0 15px 40px rgba(255, 42, 42, 0.5);
+      }
+
+      /* Section Title */
+      .section-title {
+        text-align: center;
+        margin-bottom: 60px;
+      }
+
+      .section-title h2 {
+        font-family: "Poppins", sans-serif;
+        font-size: 42px;
+        font-weight: 700;
+        color: #0b2b4b;
+        margin-bottom: 15px;
+      }
+
+      .section-title p {
+        font-size: 18px;
+        color: #666;
+        max-width: 700px;
+        margin: 0 auto;
+      }
+
+      /* Benefits Section */
+      .benefits {
+        padding: 100px 0;
+        background: #f8f9fc;
+      }
+
+      .benefits-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 30px;
+        margin-top: 50px;
+      }
+
+      .benefit-card {
+        background: white;
+        padding: 40px 30px;
+        border-radius: 15px;
+        box-shadow: 0 5px 25px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        border-top: 4px solid transparent;
+      }
+
+      .benefit-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        border-top-color: #ff2a2a;
+      }
+
+      .benefit-number {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #ff2a2a 0%, #e61e1e 100%);
+        color: white;
+        font-size: 24px;
+        font-weight: 800;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 25px;
+      }
+
+      .benefit-card h3 {
+        font-family: "Poppins", sans-serif;
+        font-size: 20px;
+        font-weight: 600;
+        color: #0b2b4b;
+        margin-bottom: 15px;
+        line-height: 1.4;
+      }
+
+      .benefit-card p {
+        font-size: 15px;
+        color: #666;
+        line-height: 1.7;
+        margin-bottom: 20px;
+      }
+
+      .benefit-card ul {
+        list-style: none;
+        padding: 0;
+      }
+
+      .benefit-card ul li {
+        font-size: 14px;
+        color: #555;
+        padding-left: 25px;
+        position: relative;
+        margin-bottom: 10px;
+        line-height: 1.6;
+      }
+
+      .benefit-card ul li:before {
+        content: "✓";
+        position: absolute;
+        left: 0;
+        color: #ff2a2a;
+        font-weight: 700;
+        font-size: 16px;
+      }
+
+      /* Stats Section */
+      .stats {
+        padding: 80px 0;
+        background: #0b2b4b;
+        text-align: center;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 50px;
+        max-width: 900px;
+        margin: 50px auto 0;
+      }
+
+      .stat-item {
+        padding: 30px;
+      }
+
+      .stat-number {
+        font-family: "Poppins", sans-serif;
+        font-size: 72px;
+        font-weight: 800;
+        color: #ff2a2a;
+        line-height: 1;
+        margin-bottom: 15px;
+      }
+
+      .stat-label {
+        font-size: 20px;
+        font-weight: 600;
+        color: white;
+        margin-bottom: 8px;
+      }
+
+      .stat-desc {
+        font-size: 15px;
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      /* About Section */
+      .about {
+        padding: 100px 0;
+        background: white;
+      }
+
+      .about-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 80px;
+        align-items: center;
+      }
+
+      .about-image {
+        position: relative;
+      }
+
+      .about-image img {
+        width: 100%;
+        height: auto;
+        max-height: 600px;
+        object-fit: cover;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(11, 43, 75, 0.15);
+      }
+
+      .about-text h2 {
+        font-family: "Poppins", sans-serif;
+        font-size: 42px;
+        font-weight: 700;
+        color: #0b2b4b;
+        line-height: 1.3;
+        margin-bottom: 25px;
+      }
+
+      .about-text h2 .highlight {
+        color: #ff2a2a;
+      }
+
+      .about-text p {
+        font-size: 17px;
+        color: #555;
+        line-height: 1.8;
+        margin-bottom: 20px;
+      }
+
+      .about-author {
+        background: #f8f9fc;
+        padding: 30px;
+        border-radius: 15px;
+        border-left: 4px solid #ff2a2a;
+        margin-top: 30px;
+      }
+
+      .about-author strong {
+        font-size: 18px;
+        color: #0b2b4b;
+        display: block;
+        margin-bottom: 8px;
+      }
+
+      .about-author p {
+        font-size: 15px;
+        color: #666;
+        margin: 0;
+      }
+
+      /* Form Section */
+      .form-section {
+        padding: 100px 0;
+        background: linear-gradient(135deg, #0b2b4b 0%, #1a4d7a 100%);
+      }
+
+      .form-wrapper {
+        max-width: 600px;
+        margin: 0 auto;
+        background: white;
+        padding: 50px;
+        border-radius: 20px;
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3);
+      }
+
+      .form-header {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+
+      .form-badge {
+        display: inline-block;
+        background: #ff2a2a;
+        color: white;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        padding: 8px 20px;
+        border-radius: 50px;
+        margin-bottom: 20px;
+      }
+
+      .form-header h2 {
+        font-family: "Poppins", sans-serif;
+        font-size: 32px;
+        font-weight: 700;
+        color: #0b2b4b;
+        margin-bottom: 12px;
+      }
+
+      .form-header p {
+        font-size: 16px;
+        color: #666;
+      }
+
+      .form-group {
+        margin-bottom: 25px;
+      }
+
+      .form-group label {
+        display: block;
+        font-size: 13px;
+        font-weight: 700;
+        color: #333;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 10px;
+      }
+
+      .form-group input,
+      .form-group select {
+        width: 100%;
+        padding: 15px 20px;
+        font-size: 16px;
+        font-family: "Inter", sans-serif;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+      }
+
+      .form-group input:focus,
+      .form-group select:focus {
+        outline: none;
+        border-color: #ff2a2a;
+        box-shadow: 0 0 0 4px rgba(255, 42, 42, 0.1);
+      }
+
+      .btn-submit {
+        width: 100%;
+        background: #ff2a2a;
+        color: white;
+        font-size: 16px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        padding: 18px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 10px;
+      }
+
+      .btn-submit:hover {
+        background: #e61e1e;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(255, 42, 42, 0.3);
+      }
+
+      .btn-submit:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .form-message {
+        display: none;
+        padding: 15px;
+        border-radius: 10px;
+        text-align: center;
+        font-weight: 600;
+        margin-bottom: 20px;
+      }
+
+      .form-message.success {
+        background: #4caf50;
+        color: white;
+      }
+
+      .form-message.error {
+        background: #f44336;
+        color: white;
+      }
+
+      .form-privacy {
+        text-align: center;
+        font-size: 12px;
+        color: #999;
+        margin-top: 20px;
+        line-height: 1.6;
+      }
+
+      /* Footer */
+      .footer {
+        background: white;
+        padding: 60px 0 40px;
+        border-top: 1px solid #e0e0e0;
+        text-align: center;
+      }
+
+      .footer-logo {
+        margin-bottom: 30px;
+      }
+
+      .footer-logo img {
+        height: 70px;
+        width: auto;
+      }
+
+      .footer-info h3 {
+        font-size: 24px;
+        font-weight: 700;
+        color: #0b2b4b;
+        margin-bottom: 15px;
+      }
+
+      .footer-info p {
+        font-size: 16px;
+        color: #666;
+        margin-bottom: 8px;
+      }
+
+      .footer-divider {
+        width: 100%;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, #17a2b8, transparent);
+        margin: 40px 0 30px;
+      }
+
+      .footer-links {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        margin-bottom: 25px;
+        flex-wrap: wrap;
+      }
+
+      .footer-links a {
+        color: #666;
+        font-size: 14px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s ease;
+      }
+
+      .footer-links a:hover {
+        color: #ff2a2a;
+      }
+
+      .footer-btn {
+        background: #17a2b8;
+        color: white;
+        font-size: 16px;
+        font-weight: 700;
+        padding: 16px 50px;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin: 20px 0;
+      }
+
+      .footer-btn:hover {
+        background: #138496;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(23, 162, 184, 0.3);
+      }
+
+      .footer-copyright {
+        font-size: 14px;
+        color: #999;
+        font-style: italic;
+      }
+
+      .footer-copyright strong {
+        color: #0b2b4b;
+        font-style: normal;
+      }
+
+      /* Animations */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Scroll Animation */
+      .scroll-animate {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: all 0.6s ease-out;
+      }
+
+      .scroll-animate.active {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* Responsive Design */
+      @media (max-width: 1024px) {
+        .container {
+          padding: 0 25px;
+        }
+
+        .hero h1 {
+          font-size: 48px;
+        }
+
+        .section-title h2 {
+          font-size: 36px;
+        }
+
+        .benefits-grid {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 25px;
+        }
+
+        .about-content {
+          gap: 50px;
+        }
+
+        .about-text h2 {
+          font-size: 36px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 0 20px;
+        }
+
+        .hero {
+          min-height: auto;
+          padding: 60px 0;
+        }
+
+        .hero-content {
+          padding: 0 20px;
+        }
+
+        .hero h1 {
+          font-size: 36px;
+          margin-bottom: 20px;
+        }
+
+        .hero p {
+          font-size: 17px;
+          margin-bottom: 30px;
+        }
+
+        .btn-primary {
+          font-size: 14px;
+          padding: 16px 35px;
+          width: 100%;
+          max-width: 350px;
+        }
+
+        .section-title h2 {
+          font-size: 30px;
+        }
+
+        .section-title p {
+          font-size: 16px;
+        }
+
+        .benefits {
+          padding: 70px 0;
+        }
+
+        .benefits-grid {
+          grid-template-columns: 1fr;
+          gap: 20px;
+        }
+
+        .benefit-card {
+          padding: 30px 25px;
+        }
+
+        .stats {
+          padding: 60px 0;
+        }
+
+        .stats-grid {
+          grid-template-columns: 1fr;
+          gap: 30px;
+        }
+
+        .stat-number {
+          font-size: 56px;
+        }
+
+        .about {
+          padding: 70px 0;
+        }
+
+        .about-content {
+          grid-template-columns: 1fr;
+          gap: 40px;
+        }
+
+        .about-image img {
+          max-height: 400px;
+        }
+
+        .about-text h2 {
+          font-size: 30px;
+        }
+
+        .about-text p {
+          font-size: 16px;
+        }
+
+        .form-section {
+          padding: 70px 0;
+        }
+
+        .form-wrapper {
+          padding: 40px 25px;
+        }
+
+        .form-header h2 {
+          font-size: 26px;
+        }
+
+        .footer-links {
+          flex-direction: column;
+          gap: 15px;
+        }
+
+        .footer-btn {
+          width: 100%;
+          max-width: 350px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .hero h1 {
+          font-size: 28px;
+        }
+
+        .hero p {
+          font-size: 15px;
+        }
+
+        .hero-badge {
+          font-size: 10px;
+          padding: 10px 20px;
+        }
+
+        .section-title h2 {
+          font-size: 26px;
+        }
+
+        .benefit-card {
+          padding: 25px 20px;
+        }
+
+        .benefit-card h3 {
+          font-size: 18px;
+        }
+
+        .stat-number {
+          font-size: 48px;
+        }
+
+        .about-text h2 {
+          font-size: 26px;
+        }
+
+        .form-wrapper {
+          padding: 30px 20px;
+        }
+
+        .form-header h2 {
+          font-size: 24px;
+        }
+
+        /* Ajuste da foto no mobile */
+        .hero-bg img {
+          object-position: center 30%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-bg">
+        <!-- FOTO DA LIDIANE - Coloque a foto profissional da Lidiane aqui -->
+        <img src="lidiane-4.jpg" alt="Lidiane Bezerra" />
+      </div>
+      <div class="hero-overlay"></div>
+
+      <div class="hero-content">
+        <div class="hero-badge">E-book Gratuito</div>
+        <h1>
+          Torne-se uma <span class="highlight">referência</span> no mercado
+          imobiliário
+        </h1>
+        <p>
+          Descubra as estratégias comprovadas que transformam corretores comuns
+          em profissionais reconhecidos e bem-sucedidos
+        </p>
+        <button class="btn-primary" onclick="scrollToForm()">
+          Quero receber o e-book grátis
+        </button>
+      </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="benefits">
+      <div class="container">
+        <div class="section-title">
+          <h2>O que você vai descobrir</h2>
+          <p>
+            Conteúdo exclusivo e prático para transformar sua carreira
+            imobiliária
+          </p>
+        </div>
+
+        <div class="benefits-grid">
+          <div class="benefit-card scroll-animate">
+            <div class="benefit-number">1</div>
+            <h3>Autoridade não se constrói no papel — se constrói em ação</h3>
+            <p>
+              Aprenda como construir uma carteira de imóveis saudável com foco e
+              estratégia.
+            </p>
+            <ul>
+              <li>Estude sua área de posicionamento</li>
+              <li>Conheça os tipos de imóveis mais comuns</li>
+              <li>Entenda características dos moradores</li>
+            </ul>
+          </div>
+
+          <div class="benefit-card scroll-animate">
+            <div class="benefit-number">2</div>
+            <h3>Carteira não é quantidade, é estratégia</h3>
+            <p>
+              Descubra como equilibrar quantidade e qualidade na sua carteira de
+              imóveis.
+            </p>
+            <ul>
+              <li>70% de imóveis de venda recorrente</li>
+              <li>30% de imóveis "joia" de estratégia</li>
+              <li>Os três pilares: Equilíbrio, Qualidade e Relacionamento</li>
+            </ul>
+          </div>
+
+          <div class="benefit-card scroll-animate">
+            <div class="benefit-number">3</div>
+            <h3>O erro mais comum: confundir carteira com estoque</h3>
+            <p>
+              Entenda a diferença crucial entre ter uma carteira viva e um
+              simples estoque parado.
+            </p>
+            <ul>
+              <li>Perfil saudável de carteira</li>
+              <li>Como evitar imóveis sem documentação</li>
+              <li>Foco em previsibilidade de receita</li>
+            </ul>
+          </div>
+
+          <div class="benefit-card scroll-animate">
+            <div class="benefit-number">4</div>
+            <h3>Rotina, Disciplina e Previsibilidade</h3>
+            <p>
+              O segredo para construir uma carreira sólida com objetivo muito
+              claro.
+            </p>
+            <ul>
+              <li>Estruturação da rotina diária</li>
+              <li>Direção clara para seus esforços</li>
+              <li>Viver de convergências, não apenas "correr atrás"</li>
+            </ul>
+          </div>
+
+          <div class="benefit-card scroll-animate">
+            <div class="benefit-number">5</div>
+            <h3>Confiança não se pede. Se conquista.</h3>
+            <p>
+              Técnicas para conquistar a confiança dos clientes e fechar
+              negócios exclusivos.
+            </p>
+            <ul>
+              <li>Imprima autoridade e transmita segurança</li>
+              <li>Clareza no posicionamento</li>
+              <li>Demonstre experiência verdadeira</li>
+            </ul>
+          </div>
+
+          <div class="benefit-card scroll-animate">
+            <div class="benefit-number">6</div>
+            <h3>Montando sua primeira Matriz BCG na Prática</h3>
+            <p>
+              O corretor que começa com método conquista velocidade mais rápido.
+            </p>
+            <ul>
+              <li>Estude o mercado junto com seu gestor</li>
+              <li>Analise estratégia de tipos diversos</li>
+              <li>Observe comportamento dos imóveis</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats">
+      <div class="container">
+        <div class="section-title">
+          <h2 style="color: white">Perfil Saudável de Carteira</h2>
+          <p style="color: rgba(255, 255, 255, 0.8)">
+            A proporção ideal para manter previsibilidade de receita
+          </p>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-item scroll-animate">
+            <div class="stat-number">70%</div>
+            <div class="stat-label">Imóveis de venda recorrente</div>
+            <div class="stat-desc">Giro rápido e receita previsível</div>
+          </div>
+          <div class="stat-item scroll-animate">
+            <div class="stat-number">30%</div>
+            <div class="stat-label">Imóveis "joia" de estratégia</div>
+            <div class="stat-desc">Posicionamento e rentabilidade</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about">
+      <div class="container">
+        <div class="about-content">
+          <div class="about-image scroll-animate">
+            <img src="LidianeeLuis-49.jpg" alt="Lidiane Bezerra" />
+          </div>
+          <div class="about-text scroll-animate">
+            <h2>
+              Transformo corretores em verdadeiras
+              <span class="highlight">referências</span> no mercado
+            </h2>
+            <p>
+              Na <strong>RE/MAX Seu Imóvel</strong>, você constrói uma carreira
+              sólida, baseada em estratégias comprovadas e apoio constante.
+            </p>
+            <p>
+              Com anos de experiência no mercado imobiliário, desenvolvi um
+              método exclusivo que já ajudou dezenas de corretores a
+              multiplicarem seus resultados e se tornarem referência em suas
+              regiões.
+            </p>
+            <div class="about-author">
+              <strong>Por Lidiane Pinheiro</strong>
+              <p>
+                Consultora Imobiliária na RE/MAX Seu Imóvel com mais de 10 anos
+                de experiência transformando corretores em profissionais de
+                sucesso.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Form Section -->
+    <section class="form-section" id="form">
+      <div class="container">
+        <div class="form-wrapper">
+          <div class="form-header">
+            <div class="form-badge">E-book Gratuito</div>
+            <h2>Receba o material agora</h2>
+            <p>Preencha os dados abaixo e tenha acesso imediato</p>
+          </div>
+
+          <div id="formMessage" class="form-message"></div>
+
+          <form id="ebookForm">
+            <div class="form-group">
+              <label for="name">Nome Completo *</label>
+              <input type="text" id="name" name="name" required />
+            </div>
+
+            <div class="form-group">
+              <label for="email">E-mail *</label>
+              <input type="email" id="email" name="email" required />
+            </div>
+
+            <div class="form-group">
+              <label for="phone">WhatsApp (opcional)</label>
+              <input type="tel" id="phone" name="phone" />
+            </div>
+
+            <div class="form-group">
+              <label for="broker">Você é corretor?</label>
+              <select id="broker" name="broker">
+                <option value="">Selecione</option>
+                <option value="Sim">Sim</option>
+                <option value="Não">Não</option>
+              </select>
+            </div>
+
+            <div class="form-group" id="imobiliariaField" style="display: none">
+              <label for="imobiliaria">De qual imobiliária?</label>
+              <input type="text" id="imobiliaria" name="imobiliaria" />
+            </div>
+
+            <button type="submit" class="btn-submit" id="submitBtn">
+              Acessar e-book agora
+            </button>
+
+            <p class="form-privacy">
+              Seus dados estão seguros. Não enviamos spam.<br />
+              Ao preencher, você terá acesso imediato ao material.
+            </p>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-logo">
+          <img src="logo.png" alt="RE/MAX Seu Imóvel" />
+        </div>
+
+        <div class="footer-info">
+          <h3>RE/MAX Seu Imóvel</h3>
+          <p>Avenida Washington Soares, 8660 B</p>
+          <p>Messejana, Fortaleza - CE, 60841-032</p>
+        </div>
+
+        <div class="footer-divider"></div>
+
+        <p class="footer-copyright">
+          Copyright © <strong>Remax Seu Imóvel</strong> – Todos os direitos
+          reservados.
+        </p>
+      </div>
+    </footer>
+
+    <script>
+      // ========== CONFIGURAÇÃO SUPABASE ==========
+      const SUPABASE_URL = "https://xpjbwdojxfbukrwsooek.supabase.co";
+      const SUPABASE_ANON_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhwamJ3ZG9qeGZidWtyd3Nvb2VrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQyMTc3NTgsImV4cCI6MjA3OTc5Mzc1OH0.Hz1v23xLjY_m6PzZoHZavy7zF2UILFySDQTaUxTAJPk";
+      const EBOOK_URL =
+        "https://drive.google.com/file/d/12DlFGam5224WkWcAWoGxW6oHfyHZh6IZ/view?usp=drive_link";
+
+      // Inicializar Supabase
+      const supabase = window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+      );
+
+      // Scroll suave para formulário
+      function scrollToForm() {
+        document.getElementById("form").scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }
+
+      // Animação ao scroll
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: "0px 0px -50px 0px",
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("active");
+          }
+        });
+      }, observerOptions);
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const heroBg = document.querySelector(".hero-bg img");
+
+        if (heroBg) {
+          heroBg.onerror = function () {
+            this.style.display = "none";
+          };
+        }
+
+        document.querySelectorAll(".scroll-animate").forEach((el) => {
+          observer.observe(el);
+        });
+
+        const brokerSelect = document.getElementById("broker");
+        const imobiliariaField = document.getElementById("imobiliariaField");
+
+        if (brokerSelect && imobiliariaField) {
+          brokerSelect.addEventListener("change", () => {
+            imobiliariaField.style.display =
+              brokerSelect.value === "Sim" ? "block" : "none";
+          });
+        }
+      });
+
+      // Processar formulário
+      document
+        .getElementById("ebookForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+
+          const submitBtn = document.getElementById("submitBtn");
+          const formMessage = document.getElementById("formMessage");
+
+          submitBtn.disabled = true;
+          submitBtn.textContent = "Processando...";
+          formMessage.style.display = "none";
+
+          const formData = {
+            name: document.getElementById("name").value,
+            email: document.getElementById("email").value,
+            phone: document.getElementById("phone").value || null,
+            created_at: new Date().toISOString(),
+          };
+
+          try {
+            const { error } = await supabase
+              .from("leads_ebook")
+              .insert([formData]);
+
+            if (error) throw error;
+
+            formMessage.textContent = "✓ Cadastro realizado! Abrindo e-book...";
+            formMessage.className = "form-message success";
+            formMessage.style.display = "block";
+
+            document.getElementById("ebookForm").reset();
+
+            setTimeout(() => {
+              const newWindow = window.open(EBOOK_URL, "_blank");
+
+              if (
+                !newWindow ||
+                newWindow.closed ||
+                typeof newWindow.closed == "undefined"
+              ) {
+                window.location.href = EBOOK_URL;
+              }
+            }, 1500);
+
+            setTimeout(() => {
+              submitBtn.disabled = false;
+              submitBtn.textContent = "Acessar e-book agora";
+            }, 3000);
+          } catch (error) {
+            console.error("Erro:", error);
+            formMessage.textContent =
+              "✗ Erro ao enviar dados. Tente novamente.";
+            formMessage.className = "form-message error";
+            formMessage.style.display = "block";
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Acessar e-book agora";
+          }
+        });
+    </script>
+  </body>
+</html>
